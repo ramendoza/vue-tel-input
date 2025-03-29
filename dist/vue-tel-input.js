@@ -3588,7 +3588,7 @@ const Tt = {
             (N(!0), O(vd, null, bd(h.value, (c, y) => (N(), O("li", {
               role: "option",
               class: E(["vti__dropdown-item", ed(y, c.iso2)]),
-              key: c.iso2 + (c.preferred ? "-preferred" : ""),
+              key: c.iso2 + c.dialCode + (c.preferred ? "-preferred" : ""),
               tabindex: "-1",
               onClick: (_) => S(c),
               onMousemove: (_) => a.selectedIndex = y,

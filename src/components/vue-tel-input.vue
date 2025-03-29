@@ -42,7 +42,7 @@
         <li v-for="(pb, index) in sortedCountries"
             role="option"
             :class="['vti__dropdown-item', getItemClass(index, pb.iso2)]"
-            :key="pb.iso2 + (pb.preferred ? '-preferred' : '')"
+            :key="pb.iso2 + pb.dialCode + (pb.preferred ? '-preferred' : '')"
             tabindex="-1"
             @click="choose(pb)"
             @mousemove="data.selectedIndex = index"

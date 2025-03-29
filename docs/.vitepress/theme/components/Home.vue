@@ -23,6 +23,7 @@
 
     <section class="content">
       <div style="width: 500px; margin: 0 auto;">
+        {{phoneModel}}
         <vue-tel-input v-model="phoneModel"
                        v-bind="options"
 
@@ -123,7 +124,7 @@ export default {
       },
       options: {
         ...defaultOptions,
-        onlyCountries: ['CU','US'],
+        // onlyCountries: ['CU','US'],
         inputOptions: {
           ...defaultOptions.inputOptions,
           showDialCode: true,
