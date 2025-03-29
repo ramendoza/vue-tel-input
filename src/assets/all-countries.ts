@@ -322,11 +322,6 @@ const allCountries: Country[] = [
     '385',
   ],
   [
-    'Cuba',
-    'cu',
-    '53',
-  ],
-  [
     'Curaçao',
     'cw',
     '599',
@@ -930,6 +925,16 @@ const allCountries: Country[] = [
     'Peru (Perú)',
     'pe',
     '51',
+  ],
+  [
+    'Cuba',
+    'cu',
+    '53',
+  ],
+  [
+    'Cuba',
+    'cu',
+    '63',
   ],
   [
     'Philippines',

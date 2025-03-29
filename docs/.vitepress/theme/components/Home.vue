@@ -2,21 +2,22 @@
   <main class="home">
     <header class="hero vp-doc">
       <img :src="withBase('hero.png')"
-           alt="vue-tel-input" />
+           alt="vue-tel-input"/>
       <h1>International Telephone Input with Vue</h1>
     </header>
 
     <section class="description vp-doc">
       <div>
         <a href="https://www.npmjs.com/package/vue-tel-input"
-              ><img src="https://img.shields.io/npm/dt/vue-tel-input.svg" /></a>&nbsp;
+        ><img src="https://img.shields.io/npm/dt/vue-tel-input.svg"/></a>&nbsp;
         <a href="https://github.com/iamstevendao/vue-tel-input"
-              ><img src="https://img.shields.io/github/stars/iamstevendao/vue-tel-input.svg"
-            /></a>
+        ><img src="https://img.shields.io/github/stars/iamstevendao/vue-tel-input.svg"
+        /></a>
       </div>
       <h3>
         made with &#x2764; by some
-        <a href="https://github.com/iamstevendao/vue-tel-input/graphs/contributors">awesome humans</a>.
+        <a href="https://github.com/iamstevendao/vue-tel-input/graphs/contributors">awesome
+          humans</a>.
       </h3>
     </section>
 
@@ -24,7 +25,8 @@
       <div style="width: 500px; margin: 0 auto;">
         <vue-tel-input v-model="phoneModel"
                        v-bind="options"
-                       @onInput="onInput" />
+
+                       @onInput="onInput"/>
       </div>
       <code v-if="phoneObject.formatted">
         <span>Formatted: <b>{{ phoneObject.formatted }}</b>,&nbsp;</span>
@@ -51,7 +53,7 @@
                         :modelName="field.model"
                         :description="field.description"
                         :label="field.label"
-                        :type="field.type" />
+                        :type="field.type"/>
           </div>
           <div v-for="field in inputFields"
                :key="field.model"
@@ -61,7 +63,7 @@
                         :description="field.description"
                         :modelName="field.model"
                         :label="field.label"
-                        :type="field.type" />
+                        :type="field.type"/>
           </div>
           <div v-for="field in dropdownFields"
                :key="field.model"
@@ -71,15 +73,15 @@
                         :description="field.description"
                         :modelName="field.model"
                         :label="field.label"
-                        :type="field.type" />
+                        :type="field.type"/>
           </div>
           <div style="margin-top: 15px">
             <a
-                  style="color: #999999"
-                  href="https://iamstevendao.github.io/vue-tel-input/usage/props.html"
-                >
-                  <span>...more</span>
-                </a>
+              style="color: #999999"
+              href="https://iamstevendao.github.io/vue-tel-input/usage/props.html"
+            >
+              <span>...more</span>
+            </a>
           </div>
         </div>
         <div class="results">
@@ -91,25 +93,25 @@
 </template>
 
 <script>
-import { withBase } from 'vitepress';
+import {withBase} from 'vitepress';
 import FormInput from './FormInput.vue';
-import { allProps, defaultOptions } from '../../../../src/utils';
+import {allProps, defaultOptions} from '../../../../src/utils';
 
 function getFormConfig(field) {
   if (field.type.name === 'Boolean') {
-    return { type: 'checkbox' };
+    return {type: 'checkbox'};
   }
   if (field.type.name === 'String') {
     if (field.options?.length) {
-      return { type: 'radio', bind: { items: field.options } };
+      return {type: 'radio', bind: {items: field.options}};
     }
-    return { type: 'input' };
+    return {type: 'input'};
   }
 }
 
 export default {
   name: 'Home',
-  components: { FormInput },
+  components: {FormInput},
   data() {
     return {
       phoneModel: '',
@@ -121,15 +123,19 @@ export default {
       },
       options: {
         ...defaultOptions,
+        onlyCountries: ['CU'],
         inputOptions: {
           ...defaultOptions.inputOptions,
           showDialCode: true,
         },
+        // dropdownOptions: {
+        //   showSearchBox: true,
+        // },
         mode: 'international',
         validCharactersOnly: true,
       },
       fields: allProps
-        .filter(({ inDemo }) => inDemo)
+        .filter(({inDemo}) => inDemo)
         .map((prop) => ({
           model: prop.name,
           label: prop.name,
@@ -141,7 +147,7 @@ export default {
   computed: {
     dropdownFields() {
       return this.fields
-        .filter(({ model }) => model.includes('dropdownOptions'))
+        .filter(({model}) => model.includes('dropdownOptions'))
         .map((field) => ({
           ...field,
           model: field.model.split('.')[1],
@@ -149,7 +155,7 @@ export default {
     },
     inputFields() {
       return this.fields
-        .filter(({ model }) => model.includes('inputOptions'))
+        .filter(({model}) => model.includes('inputOptions'))
         .map((field) => ({
           ...field,
           model: field.model.split('.')[1],
@@ -157,13 +163,12 @@ export default {
     },
     otherFields() {
       return this.fields
-        .filter(({ model }) => !model.includes('dropdownOptions') && !model.includes('inputOptions'));
+        .filter(({model}) => !model.includes('dropdownOptions') && !model.includes('inputOptions'));
     },
   },
   methods: {
     withBase,
     onInput(formattedNumber, phoneObject) {
-      console.log('onInput', formattedNumber, phoneObject);
       this.phoneObject = phoneObject;
     },
   },
@@ -183,7 +188,7 @@ export default {
   text-align: center;
 }
 
-.home .hero>img {
+.home .hero > img {
   max-width: 100%;
   max-height: 100px;
   display: block;
