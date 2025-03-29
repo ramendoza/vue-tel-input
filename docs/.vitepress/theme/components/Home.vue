@@ -124,7 +124,7 @@ export default {
       },
       options: {
         ...defaultOptions,
-        // onlyCountries: ['CU','US'],
+        onlyCountries: ['CU','US', 'CU_63'],
         inputOptions: {
           ...defaultOptions.inputOptions,
           showDialCode: true,

@@ -16,7 +16,7 @@
       <span class="vti__selection">
           <span
             v-if="dropdownOptions.showFlags"
-            :class="['vti__flag', toLowerCase(data.activeCountryCode)]"
+            :class="['vti__flag', toLowerCase(data.activeCountryCode?.slice(0,2))]"
           ></span>
       <span v-if="dropdownOptions.showDialCodeInSelection" class="vti__country-code">
             +{{ activeCountry && activeCountry.dialCode }}
@@ -49,7 +49,7 @@
             :aria-selected="data.activeCountryCode === pb.iso2 && !pb.preferred">
           <span
             v-if="dropdownOptions.showFlags"
-            :class="['vti__flag', toLowerCase(pb.iso2)]"
+            :class="['vti__flag', toLowerCase(pb.iso2?.slice(0,2))]"
           ></span>
           <strong>{{ pb.name }}</strong>
           <span v-if="dropdownOptions.showDialCodeInList"> +{{ pb.dialCode }} </span>
@@ -205,7 +205,7 @@ watch(modelValue, (value, oldValue) => {
 
 const data = reactive({
   phone: '',
-  activeCountryCode: undefined as CountryCode | undefined,
+  activeCountryCode: undefined as CountryCode | any | undefined,
   activeDialogCode: undefined,
   open: false,
   finishMounted: false,
@@ -249,6 +249,7 @@ watch(activeCountry, (value, oldValue) => {
     data.activeCountryCode = oldValue.iso2;
     return;
   }
+
   if (value?.iso2) {
     emit('country-changed', value);
     // resetPlaceholder();
@@ -292,25 +293,33 @@ const sortedCountries = computed(() => {
 })
 
 const phoneObject = computed(() => {
-  let result;
-  if (data.phone.startsWith('+63') && data.activeCountryCode === 'CU') {
-    result = parsePhoneNumberFromString(data.phone.replace('+63', '+53'), 'CU');
-    if (result) {
-      if (result.formatted)
-        result.formatted = result.formatted?.replace('+53', '+63');
-      result.countryCallingCode = result.countryCallingCode?.replace('53', '63');
-      result.number = result.number?.replace('+53', '+63');
+  let result: any;
+  if (data.phone?.startsWith('+')) {
+    if (data.phone.startsWith('+63') && (data.activeCountryCode === 'CU_63' || data.activeCountryCode === 'CU')) {
+      result = parsePhoneNumberFromString(data.phone.replace('+63', '+53'), 'CU');
+      if (result) {
+        if (result.formatted)
+          result.formatted = result.formatted?.replace('+53', '+63');
+        result.countryCallingCode = result.countryCallingCode?.replace('53', '63');
+        result.number = result.number?.replace('+53', '+63');
+        result.country = 'CU_63'
+      }
+    } else {
+      result = parsePhoneNumberFromString(data.phone)
     }
+    const country = findCountryByDialCode(result?.countryCallingCode)
+    if (!country)
+      result = null
   } else {
-    result = data.phone.startsWith('+')
-      ? parsePhoneNumberFromString(data.phone)
-      : parsePhoneNumberFromString(data.phone, data.activeCountryCode);
+    result = parsePhoneNumberFromString(data.phone, data.activeCountryCode)
   }
+
+
   const meta: PhoneMeta = {
     country: result?.country,
     countryCode: result?.country,
     formatted: data.phone,
-    valid: result?.isValid(),
+    valid: validateResult(result),
     possible: result?.isPossible?.(),
     nationalNumber: result?.nationalNumber,
   }
@@ -319,15 +328,15 @@ const phoneObject = computed(() => {
     meta.formatted = result?.format(toUpperCase(parsedMode.value));
   }
 
-  if (data.phone.startsWith('+63') && data.activeCountryCode === 'CU')
+  if (data.phone.startsWith('+63') && data.activeCountryCode === 'CU_63')
     meta.formatted = meta.formatted.replace('+53', '+63');
 
   if (result?.country
     && (props.ignoredCountries.length || props.onlyCountries.length)
-    && !findCountry(result.country)) {
+    && !findCountry(result?.country)) {
     meta.valid = false;
     meta.possible = false;
-    result.country = null;
+    result!.country = null;
   }
 
   if (!result) {
@@ -339,6 +348,13 @@ const phoneObject = computed(() => {
     ...result,
   }
 })
+
+const validateResult = (result: any) => {
+  if (result && result.country === 'CU_63')
+    result.country = 'CU'
+  return result?.isValid()
+}
+
 watch(() => phoneObject.value.countryCode, (value) => {
   if (value) {
     data.activeCountryCode = value;

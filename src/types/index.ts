@@ -2,7 +2,7 @@ import type { CountryCode, PhoneNumber } from "libphonenumber-js";
 
 export type Country = [
   CountryName: string,
-  Iso2: Lowercase<CountryCode>,
+  Iso2: Lowercase<CountryCode| any>,
   DialCode: string,
   Priority?: number,
   AreaCodes?: string[]

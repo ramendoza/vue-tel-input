@@ -933,7 +933,7 @@ const allCountries: Country[] = [
   ],
   [
     'Cuba',
-    'cu',
+    'cu_63',
     '63',
   ],
   [
