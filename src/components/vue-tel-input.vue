@@ -206,6 +206,7 @@ watch(modelValue, (value, oldValue) => {
 const data = reactive({
   phone: '',
   activeCountryCode: undefined as CountryCode | undefined,
+  activeDialogCode: undefined,
   open: false,
   finishMounted: false,
   selectedIndex: null as number | null,
@@ -242,7 +243,7 @@ const filteredCountries = computed(() => {
   return props.allCountries;
 })
 
-const activeCountry = computed(() => findCountry(data.activeCountryCode))
+const activeCountry = computed(() => findCountryByDialCode(data.activeDialogCode))
 watch(activeCountry, (value, oldValue) => {
   if (!value && oldValue?.iso2) {
     data.activeCountryCode = oldValue.iso2;
@@ -295,7 +296,7 @@ const phoneObject = computed(() => {
   if (data.phone.startsWith('+63') && data.activeCountryCode === 'CU') {
     result = parsePhoneNumberFromString(data.phone.replace('+63', '+53'), 'CU');
     if (result) {
-      if(result.formatted)
+      if (result.formatted)
         result.formatted = result.formatted?.replace('+53', '+63');
       result.countryCallingCode = result.countryCallingCode?.replace('53', '63');
       result.number = result.number?.replace('+53', '+63');
@@ -318,7 +319,7 @@ const phoneObject = computed(() => {
     meta.formatted = result?.format(toUpperCase(parsedMode.value));
   }
 
-  if(data.phone.startsWith('+63') && data.activeCountryCode === 'CU')
+  if (data.phone.startsWith('+63') && data.activeCountryCode === 'CU')
     meta.formatted = meta.formatted.replace('+53', '+63');
 
   if (result?.country
@@ -470,12 +471,14 @@ function getCountries(list: string[] = []) {
     .filter(Boolean);
 }
 
-function findCountry(iso = '') {
+function findCountry(iso = '', code = null) {
+  if (code)
+    return filteredCountries.value.find((country) => country.iso2 === toUpperCase(iso));
   return filteredCountries.value.find((country) => country.iso2 === toUpperCase(iso));
 }
 
 function findCountryByDialCode(dialCode: number) {
-  return filteredCountries.value.find((country) => Number(country.dialCode) === dialCode);
+  return filteredCountries.value.find((country) => Number(country.dialCode) === Number(dialCode));
 }
 
 function getItemClass(index: number, iso2: string) {
@@ -490,6 +493,7 @@ function getItemClass(index: number, iso2: string) {
 }
 
 function choose(country: string | CountryObject) {
+  focus()
   let parsedCountry = country;
   if (typeof parsedCountry === 'string') {
     parsedCountry = findCountry(parsedCountry);
@@ -499,28 +503,31 @@ function choose(country: string | CountryObject) {
     return;
   }
 
-  if (data.phone?.[0] === '+'
-    && parsedCountry.iso2
-    && phoneObject.value.nationalNumber) {
-    data.activeCountryCode = parsedCountry.iso2;
-    // Attach the current phone number with the newly selected country
-    data.phone = parsePhoneNumberFromString(
-      phoneObject.value.nationalNumber,
-      parsedCountry.iso2,
-    )
-      ?.formatInternational() ?? '';
-    return;
-  }
+  // if (data.phone?.[0] === '+'
+  //   && parsedCountry.iso2
+  //   && phoneObject.value.nationalNumber) {
+  //   data.activeCountryCode = parsedCountry.iso2;
+  //   data.activeDialogCode = parsedCountry.dialCode;
+  //   // Attach the current phone number with the newly selected country
+  //   data.phone = parsePhoneNumberFromString(
+  //     phoneObject.value.nationalNumber,
+  //     parsedCountry.iso2,
+  //   )
+  //     ?.formatInternational() ?? '';
+  //   return;
+  // }
 
   if (props.inputOptions?.showDialCode && parsedCountry) {
     // Reset phone if the showDialCode is set
     data.phone = `+${parsedCountry.dialCode}`;
     data.activeCountryCode = parsedCountry.iso2;
+    data.activeDialogCode = parsedCountry.dialCode;
     return;
   }
 
   // update value, even if international mode is NOT used
   data.activeCountryCode = parsedCountry.iso2;
+  data.activeDialogCode = parsedCountry.dialCode;
   emitInput(data.phone);
 }
 

@@ -123,14 +123,17 @@ export default {
       },
       options: {
         ...defaultOptions,
-        onlyCountries: ['CU'],
+        onlyCountries: ['CU','US'],
         inputOptions: {
           ...defaultOptions.inputOptions,
           showDialCode: true,
         },
-        // dropdownOptions: {
-        //   showSearchBox: true,
-        // },
+        dropdownOptions: {
+          showDialCodeInSelection: true,
+          showFlags: true,
+          showDialCodeInList: true,
+          showSearchBox: true,
+        },
         mode: 'international',
         validCharactersOnly: true,
       },
